@@ -13,6 +13,7 @@ import {
 import { cn } from '../../utils/utils';
 import Testimonials from './Testimonials'; // Import Testimonials component
 import { Cover } from '../ui/Cover';
+import { NavLink } from 'react-router-dom';
 
 const images = [
   'https://images.unsplash.com/photo-1517646458010-ea6bd9f4a75f',
@@ -92,7 +93,7 @@ const Hero = ({ onShopNowClick }) => {
             Explore our curated collection of premium spices, sourced from the world's finest regions
             to elevate your culinary creations.
           </p>
-
+          <NavLink to='/products' >
           <div className="flex items-center gap-4">
             <Button
               onClick={onShopNowClick}
@@ -107,6 +108,7 @@ const Hero = ({ onShopNowClick }) => {
               <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
+          </NavLink>
         </motion.div>
 
         {/* Carousel Section */}
