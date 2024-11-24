@@ -50,7 +50,7 @@ const ProductSection = forwardRef((props, ref) => {
       rating: 4.8
     },
     {
-      image: "https://images.unsplash.com/photo-1599909533144-fe2f38a0d668?q=80&w=2070",
+      image: "https://images.unsplash.com/photo-1607672632458-9eb56696346b",
       title: 'Chili Powder',
       description: 'Spicy and vibrant red chili powder with intense flavor.',
       price: 15.5,
@@ -58,14 +58,87 @@ const ProductSection = forwardRef((props, ref) => {
       rating: 4.9
     },
     {
-      image: "https://images.unsplash.com/photo-1599909533414-5bd3980b2a59?q=80&w=2070",
+      image: "https://images.unsplash.com/photo-1599320092708-8a9dde49fc2c",
       title: 'Cumin Seeds',
       description: 'Aromatic and flavorful cumin seeds for authentic taste.',
       price: 10.5,
       origin: 'Turkey',
       rating: 4.7
+    },
+    {
+      image: "https://img.freepik.com/free-photo/spices-are-placed-spoon-placed-cement-ground_1150-20774.jpg",
+      title: 'Coriander Powder',
+      description: 'Premium coriander powder with a fresh, earthy aroma.',
+      price: 8.5,
+      origin: 'India',
+      rating: 4.6
+    },
+    {
+      image: "https://img.freepik.com/free-photo/wooden-plate-full-dried-pepper-white-background_114579-77244.jpg",
+      title: 'Black Pepper',
+      description: 'Whole black peppercorns with bold and robust flavor.',
+      price: 18.0,
+      origin: 'Vietnam',
+      rating: 4.9
+    },
+    {
+      image: "https://img.freepik.com/free-photo/close-up-pumpkin-seeds_53876-33638.jpg",
+      title: 'Cardamom Pods',
+      description: 'Fragrant green cardamom pods, perfect for tea and desserts.',
+      price: 25.0,
+      origin: 'Guatemala',
+      rating: 4.8
+    },
+    {
+      image: "https://img.freepik.com/free-photo/stack-cinnamon_144627-444.jpg",
+      title: 'Cinnamon Sticks',
+      description: 'Rich and aromatic cinnamon sticks sourced from Sri Lanka.',
+      price: 22.5,
+      origin: 'Sri Lanka',
+      rating: 4.9
+    },
+    {
+      image: "https://img.freepik.com/free-photo/top-view-dried-cloves-with-wooden-spoon_140725-9082.jpg",
+      title: 'Cloves',
+      description: 'Strong and fragrant cloves for enhancing savory and sweet dishes.',
+      price: 30.0,
+      origin: 'Indonesia',
+      rating: 4.7
+    },
+    {
+      image: "https://img.freepik.com/premium-photo/nutmeg-isolated-white-dry-whole-nutmeg-wooden-bowl-close-up_157837-2063.jpg",
+      title: 'Nutmeg',
+      description: 'Fresh and whole nutmeg with a warm, sweet flavor.',
+      price: 20.0,
+      origin: 'Grenada',
+      rating: 4.6
+    },
+    {
+      image: "https://img.freepik.com/premium-photo/fenugreek-seeds-as-background-close-up-texture_136354-4895.jpg",
+      title: 'Fenugreek Seeds',
+      description: 'Nutty and slightly sweet fenugreek seeds for traditional recipes.',
+      price: 6.5,
+      origin: 'India',
+      rating: 4.5
+    },
+    {
+      image: "https://img.freepik.com/free-photo/high-angle-plate-with-star-anise_23-2148426142.jpg",
+      title: 'Star Anise',
+      description: 'Beautiful and aromatic star anise for an exotic touch.',
+      price: 28.0,
+      origin: 'China',
+      rating: 4.8
+    },
+    {
+      image: "https://img.freepik.com/free-photo/black-sesame-dark-background_1150-45234.jpg",
+      title: 'Mustard Seeds',
+      description: 'Zesty and pungent mustard seeds for an extra kick.',
+      price: 5.5,
+      origin: 'Canada',
+      rating: 4.6
     }
   ];
+  
 
   const dryFruits = [
     {

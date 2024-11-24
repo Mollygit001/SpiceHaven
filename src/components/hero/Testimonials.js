@@ -20,16 +20,16 @@ const testimonials = [
   },
   {
     name: 'Emily Johnson',
-    quote: "Flavors like no other! The best spices I’ve ever used in my kitchen.",
+    quote: "Flavors like no other! The best spices I've ever used in my kitchen.",
     image: 'https://randomuser.me/api/portraits/women/2.jpg',
   },
-  // Add more testimonials as needed
+  
 ];
 
 const Testimonials = () => (
   <motion.div
     className="relative overflow-hidden"
-    style={{ height: '300px' }} // Adjust height as needed
+    style={{ height: '300px' }} 
   >
     <motion.div
       className="flex gap-8 animate-slider"

@@ -38,14 +38,14 @@ const SpiceCard = ({ image, title, description, basePrice = 1000, rating = 0 }) 
     return (
         <div className="relative max-w-xs p-4 text-center transition-transform transform bg-white border-2 rounded-lg shadow-xl border-amber-900 hover:scale-105">
             {rating > 4 && (
-                <div className="absolute px-2 py-1 text-xs font-semibold text-white rounded-md top-4 left-4 bg-amber-500">
+                <div className="absolute px-2 py-1 mr-2 text-xs font-semibold text-white rounded-md top-4 left-4 bg-amber-500">
                     Bestseller
                 </div>
             )}
 
             <img src={image} alt={title} className="object-cover w-full h-48 mb-4 rounded-md" />
             
-            <h3 className="text-xl font-semibold text-amber-900">{title}</h3>
+            <h3 className="ml-2 text-xl font-semibold text-amber-900">{title}</h3>
 
             <div className="flex justify-center mt-2">
                 {Array(Math.floor(rating)).fill().map((_, i) => (

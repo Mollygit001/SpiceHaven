@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { AiOutlineClose } from 'react-icons/ai';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
+import UpdateAccountInfo from './UpdateInfo'; // Import the UpdateAccountInfo component
 
 const Account = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginForm, setIsLoginForm] = useState(true); // true for login, false for sign up
-  const [focused, setFocused] = useState({ username: false, email: false, password: false });
+  const [currentUser, setCurrentUser] = useState(null); // Stores the logged-in or signed-up user
+  const [errorMessage, setErrorMessage] = useState('');
+  const [cartDetails, setCartDetails] = useState([]); // Placeholder for user cart details
+  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const openModal = (isLogin) => {
     setIsLoginForm(isLogin);
@@ -15,152 +22,225 @@ const Account = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setErrorMessage('');
   };
 
-  const handleFocus = (field) => {
-    setFocused((prev) => ({ ...prev, [field]: true }));
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+  
+    const payload = {
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
+  
+    // If it's a signup, include the username
+    if (!isLoginForm) {
+      payload.username = e.target.username?.value;
+    }
+  
+    try {
+      let response;
+      if (isLoginForm) {
+        response = await axios.post('http://localhost:5000/api/auth/login', payload);
+      } else {
+        response = await axios.post('http://localhost:5000/api/auth/signup', payload);
+      }
+  
+      setCurrentUser({
+        username: response.data.username || payload.username,
+        email: payload.email,
+      });
+  
+      setCartDetails([{ item: 'Spices', quantity: 2 }, { item: 'Dry Fruits', quantity: 1 }]);
+      closeModal();
+    } catch (error) {
+      setErrorMessage(error.response?.data?.error || 'Something went wrong');
+    }
+  };
+  
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setCartDetails([]);
   };
 
-  const handleBlur = (field, e) => {
-    if (!e.target.value) {
-      setFocused((prev) => ({ ...prev, [field]: false }));
+  const handleUpdateFormSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.put('http://localhost:5000/api/auth/update', {
+        username: newUsername,
+        password: newPassword,
+      });
+
+      if (response.status === 200) {
+        setCurrentUser({
+          ...currentUser,
+          username: newUsername, // Update the username
+        });
+        setIsUpdateFormOpen(false);
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.error || 'Update failed');
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen bg-gradient-to-r from-yellow-100 to-yellow-300">
-      {/* Option Cards for Login and Sign Up */}
-      <div className="flex gap-8">
+      {/* Logged-in View */}
+      {currentUser ? (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          className="p-6 bg-white rounded-lg shadow-lg"
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          whileHover={{ scale: 1.1 }}
-          transition={{ type: 'spring', stiffness: 100 }}
-          className="w-48 p-6 text-center bg-white rounded-lg shadow-lg cursor-pointer"
-          onClick={() => openModal(true)}
         >
-          <FaUserCircle className="mx-auto mb-2 text-4xl text-amber-600" />
-          <h2 className="text-xl font-semibold text-gray-700">Login</h2>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          whileHover={{ scale: 1.1 }}
-          transition={{ type: 'spring', stiffness: 100, delay: 0.2 }}
-          className="w-48 p-6 text-center bg-white rounded-lg shadow-lg cursor-pointer"
-          onClick={() => openModal(false)}
-        >
-          <FaUserCircle className="mx-auto mb-2 text-4xl text-amber-600" />
-          <h2 className="text-xl font-semibold text-gray-700">Sign Up</h2>
-        </motion.div>
-      </div>
-
-      {/* Modal Popup for Login/Sign Up Form */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="relative w-full max-w-md p-8 bg-white rounded-lg shadow-lg"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 200 }}
+          <h2 className="text-2xl font-semibold text-center text-amber-800">
+            Welcome, {currentUser.username || currentUser.email}!
+          </h2>
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold">Your Cart:</h3>
+            {cartDetails.length > 0 ? (
+              <ul className="mt-2 space-y-2">
+                {cartDetails.map((item, index) => (
+                  <li key={index} className="p-2 bg-gray-100 rounded-md">
+                    {item.item} - {item.quantity}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Your cart is empty.</p>
+            )}
+          </div>
+          <div className="flex gap-4 mt-6">
+            <button
+              className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              onClick={() => alert('Account settings coming soon!')}
             >
-              <button
-                className="absolute text-2xl text-gray-500 top-3 right-3 hover:text-gray-700"
-                onClick={closeModal}
-              >
-                <AiOutlineClose />
-              </button>
-
-              <motion.h2
-                className="mb-6 text-2xl font-semibold text-center text-amber-800"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-              >
-                {isLoginForm ? 'Login' : 'Sign Up'}
-              </motion.h2>
-
-              <form className="space-y-8">
-                {!isLoginForm && (
-                  <div className="relative">
-                    <motion.label
-                      className="absolute text-gray-600 transition-all duration-300 pointer-events-none left-3"
-                      animate={{
-                        y: focused.username ? -24 : 0,
-                        scale: focused.username ? 0.85 : 1,
-                        color: focused.username ? '#f59e0b' : '#4b5563',
-                      }}
-                    >
-                      Username
-                    </motion.label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 mt-5 border border-gray-300 rounded-lg focus:border-amber-500 focus:ring-amber-500"
-                      onFocus={() => handleFocus('username')}
-                      onBlur={(e) => handleBlur('username', e)}
-                      required
-                    />
-                  </div>
-                )}
-                <div className="relative">
-                  <motion.label
-                    className="absolute text-gray-600 transition-all duration-300 pointer-events-none left-3"
-                    animate={{
-                      y: focused.email ? -24 : 0,
-                      scale: focused.email ? 0.85 : 1,
-                      color: focused.email ? '#f59e0b' : '#4b5563',
-                    }}
-                  >
-                    Email
-                  </motion.label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-2 mt-5 border border-gray-300 rounded-lg focus:border-amber-500 focus:ring-amber-500"
-                    onFocus={() => handleFocus('email')}
-                    onBlur={(e) => handleBlur('email', e)}
-                    required
-                  />
-                </div>
-                <div className="relative">
-                  <motion.label
-                    className="absolute text-gray-600 transition-all duration-300 pointer-events-none left-3"
-                    animate={{
-                      y: focused.password ? -24 : 0,
-                      scale: focused.password ? 0.85 : 1,
-                      color: focused.password ? '#f59e0b' : '#4b5563',
-                    }}
-                  >
-                    Password
-                  </motion.label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-2 mt-5 border border-gray-300 rounded-lg focus:border-amber-500 focus:ring-amber-500"
-                    onFocus={() => handleFocus('password')}
-                    onBlur={(e) => handleBlur('password', e)}
-                    required
-                  />
-                </div>
-
-                <motion.button
-                  type="submit"
-                  className="w-full py-2 mt-4 text-white rounded-lg bg-amber-600 hover:bg-amber-700"
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {isLoginForm ? 'Login' : 'Sign Up'}
-                </motion.button>
-              </form>
+              Account Settings
+            </button>
+            <button
+              className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+            <button
+              className="px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700"
+              onClick={() => setIsUpdateFormOpen(true)} // Open the update form
+            >
+              Update Account Info
+            </button>
+          </div>
+        </motion.div>
+      ) : (
+        // Logged-out View: Login/Signup Options
+        <>
+          <div className="flex gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: 'spring', stiffness: 100 }}
+              className="w-48 p-6 text-center bg-white rounded-lg shadow-lg cursor-pointer"
+              onClick={() => openModal(true)}
+            >
+              <FaUserCircle className="mx-auto mb-2 text-4xl text-amber-600" />
+              <h2 className="text-xl font-semibold text-gray-700">Login</h2>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: 'spring', stiffness: 100, delay: 0.2 }}
+              className="w-48 p-6 text-center bg-white rounded-lg shadow-lg cursor-pointer"
+              onClick={() => openModal(false)}
+            >
+              <FaUserCircle className="mx-auto mb-2 text-4xl text-amber-600" />
+              <h2 className="text-xl font-semibold text-gray-700">Sign Up</h2>
+            </motion.div>
+          </div>
+
+          {/* Modal Popup for Login/Sign Up Form */}
+          <AnimatePresence>
+            {isModalOpen && (
+              <motion.div
+                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="relative w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+                  <AiOutlineClose
+                    onClick={closeModal}
+                    className="absolute text-2xl cursor-pointer top-3 right-3"
+                  />
+                  <h2 className="mb-4 text-2xl font-semibold text-center text-amber-800">
+                    {isLoginForm ? 'Login' : 'Sign Up'}
+                  </h2>
+                  <form onSubmit={handleFormSubmit}>
+                    {!isLoginForm && (
+                      <div className="relative">
+                        <input
+                          type="text"
+                          name="username"
+                          placeholder="Username"
+                          className="w-full px-4 py-2 mt-5 border border-gray-300 rounded-lg focus:border-amber-500 focus:ring-amber-500"
+                        />
+                      </div>
+                    )}
+                    <div className="relative">
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Email"
+                        className="w-full px-4 py-2 mt-5 border border-gray-300 rounded-lg focus:border-amber-500 focus:ring-amber-500"
+                      />
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="password"
+                        name="password"
+                        required
+                        placeholder="Password"
+                        className="w-full px-4 py-2 mt-5 border border-gray-300 rounded-lg focus:border-amber-500 focus:ring-amber-500"
+                      />
+                    </div>
+                    {errorMessage && <p className="mt-4 text-red-600">{errorMessage}</p>}
+                    <div className="flex gap-4 mt-6">
+                      <button
+                        type="submit"
+                        className="w-full py-3 text-white rounded-lg bg-amber-600 hover:bg-amber-700"
+                      >
+                        {isLoginForm ? 'Login' : 'Sign Up'}
+                      </button>
+                      <button
+                        type="button"
+                        className="w-full py-3 text-white bg-red-600 rounded-lg hover:bg-red-700"
+                        onClick={closeModal}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
+
+      {/* Update Account Info Form */}
+      {isUpdateFormOpen && (
+        <UpdateAccountInfo
+          errorMessage={errorMessage}
+          newUsername={newUsername}
+          setNewUsername={setNewUsername}
+          newPassword={newPassword}
+          setNewPassword={setNewPassword}
+          handleUpdateFormSubmit={handleUpdateFormSubmit}
+        />
+      )}
     </div>
   );
 };
